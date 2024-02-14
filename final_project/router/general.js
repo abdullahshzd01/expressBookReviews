@@ -13,7 +13,7 @@ public_users.post("/register", (req,res) => {
     if (!username || !password) {
         return res.status(400).json({ message: "Username and password are required." });
     }
-    
+
     if (isValid(username)) {
         return res.status(409).json({ message: "Username already exists. Choose a different username." });
     }
@@ -79,6 +79,18 @@ public_users.get('/async/isbn/:isbn', async function (req, res) {
     } catch (error) {
         res.status(404).json({ message: 'Book not found', error: error.message });
     }
+});
+
+// Get the book list available in the shop using Promise callbacks
+public_users.get('/async/isbn/:isbn', function (req, res) {
+  const isbn = req.params.isbn;
+  axios.get(`http://localhost:5000/isbn/${isbn}`)
+      .then(response => {
+          res.status(200).json(response.data);
+      })
+      .catch(error => {
+          res.status(500).json({ message: 'Error fetching book details', error: error.message });
+      });
 });
   
 // Get book details based on author
